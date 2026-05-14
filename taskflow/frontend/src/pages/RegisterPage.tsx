@@ -22,9 +22,10 @@ export default function RegisterPage() {
         email,
         display_name: displayName,
         password,
+        // Role server side decide karta hai — pehla user admin, baaki sab user
       });
       setAuth(data.user, data.access_token);
-      navigate("/projects");
+      navigate("/home");
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
@@ -45,7 +46,9 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Display name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Display name
+            </label>
             <input
               id="name"
               type="text"
@@ -57,7 +60,9 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -68,7 +73,9 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               id="password"
               type="password"

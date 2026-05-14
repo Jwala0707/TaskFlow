@@ -18,7 +18,11 @@ def register():
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "Email already registered", "status": 409}), 409
 
-    user = User(email=data["email"], display_name=data["display_name"])
+    # Pehla registered user automatically admin banega
+    is_first_user = User.query.count() == 0
+    role = "admin" if is_first_user else "user"
+
+    user = User(email=data["email"], display_name=data["display_name"], role=role)
     user.set_password(data["password"])
     db.session.add(user)
     db.session.commit()

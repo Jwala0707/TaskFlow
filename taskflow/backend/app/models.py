@@ -36,6 +36,7 @@ class User(db.Model):
     email: str = db.Column(db.String(255), unique=True, nullable=False, index=True)
     display_name: str = db.Column(db.String(100), nullable=False)
     _password_hash: str = db.Column("password_hash", db.String(255), nullable=False)
+    role: str = db.Column(db.String(20), nullable=False, default="user")  # "user" or "admin"
     created_at: datetime = db.Column(db.DateTime(timezone=True), default=_utcnow, nullable=False)
 
     projects = db.relationship("Project", back_populates="owner", cascade="all, delete-orphan")
@@ -49,8 +50,16 @@ class User(db.Model):
     def check_password(self, plaintext: str) -> bool:
         return bcrypt.checkpw(plaintext.encode(), self._password_hash.encode())
 
+    def is_admin(self) -> bool:
+        return self.role == "admin"
+
     def to_dict(self) -> dict:
-        return {"id": self.id, "email": self.email, "display_name": self.display_name}
+        return {
+            "id": self.id,
+            "email": self.email,
+            "display_name": self.display_name,
+            "role": self.role,
+        }
 
 
 class Project(db.Model):

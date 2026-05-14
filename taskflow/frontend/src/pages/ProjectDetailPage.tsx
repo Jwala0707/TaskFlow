@@ -17,6 +17,9 @@ import { useProject } from "../hooks/useProjects";
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useReorderTasks } from "../hooks/useTasks";
 import TaskCard from "../components/TaskCard";
 import AddTaskForm from "../components/AddTaskForm";
+import AITaskInput from "../components/AITaskInput";
+import AISuggestTasks from "../components/AISuggestTasks";
+import type { ParsedTask } from "../hooks/useAI";
 import type { TaskStatus, TaskPriority } from "../types";
 
 export default function ProjectDetailPage() {
@@ -47,6 +50,16 @@ export default function ProjectDetailPage() {
     const [moved] = reordered.splice(oldIndex, 1);
     reordered.splice(newIndex, 0, moved);
     reorderTasks.mutate(reordered.map((t) => t.id));
+  }
+
+  // AI parsed task — pre-fill the normal create flow
+  function handleAIParsed(parsed: ParsedTask) {
+    createTask.mutate({
+      title: parsed.title,
+      description: parsed.description ?? undefined,
+      priority: parsed.priority,
+      due_date: parsed.due_date ?? undefined,
+    });
   }
 
   if (projectLoading || tasksLoading) return <p className="text-gray-500">Loading...</p>;
@@ -95,9 +108,20 @@ export default function ProjectDetailPage() {
         <p className="text-gray-400 text-sm py-4">No tasks yet. Add one below.</p>
       )}
 
+      {/* Manual task form */}
       <AddTaskForm
         onAdd={(title, priority: TaskPriority) => createTask.mutate({ title, priority })}
         isLoading={createTask.isPending}
+      />
+
+      {/* AI: natural language task creation */}
+      <AITaskInput onParsed={handleAIParsed} />
+
+      {/* AI: suggest tasks for this project */}
+      <AISuggestTasks
+        projectName={project.name}
+        projectDescription={project.description}
+        onAddTask={(title, priority) => createTask.mutate({ title, priority })}
       />
     </div>
   );

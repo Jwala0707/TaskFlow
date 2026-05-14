@@ -19,7 +19,7 @@ export default function LoginPage() {
     try {
       const { data } = await api.post<{ user: User; access_token: string }>("/auth/login", { email, password });
       setAuth(data.user, data.access_token);
-      navigate("/projects");
+      navigate("/home");
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
